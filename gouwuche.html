@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>购物车</title>
+    <meta charset="utf-8" />
+    <style type="text/css">
+      h1 {
+        text-align:center;
+      }
+      table {
+        margin:0 auto;
+        width:60%;
+        border:2px solid #aaa;
+        border-collapse:collapse;
+      }
+      table th, table td {
+        border:2px solid #aaa;
+        padding:5px;
+      }
+      th {
+        background-color:#eee;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>真划算</h1>
+    <table>
+      <tr>
+        <th>商品</th>
+        <th>单价(元)</th>
+        <th>颜色</th>
+        <th>库存</th>
+        <th>好评率</th>
+        <th>操作</th>
+      </tr>   
+      <tr>
+        <td class="name">罗技M185鼠标</td>
+        <td class="aprice">80</td>
+        <td>黑色</td>
+        <td>893</td>
+        <td>98%</td>
+        <td align="center">
+          <input type="button" value="加入购物车" class="addbtn" />
+        </td>
+      </tr>
+      <tr>
+        <td class="name">微软X470键盘</td>
+        <td class="aprice">150</td>
+        <td>黑色</td>
+        <td>9028</td>
+        <td>96%</td>
+        <td align="center">
+          <input type="button" value="加入购物车" class="addbtn"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="name">洛克iphone6手机壳</td>
+        <td class="aprice">60</td>
+        <td>透明</td>
+        <td>672</td>
+        <td>99%</td>
+        <td align="center">
+          <input type="button" value="加入购物车" class="addbtn"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="name">蓝牙耳机</td>
+        <td class="aprice">100</td>
+        <td>蓝色</td>
+        <td>8937</td>
+        <td>95%</td>
+        <td align="center">
+          <input type="button" value="加入购物车" class="addbtn"/>
+        </td>
+      </tr>
+      <tr>
+        <td class="name">金士顿U盘</td>
+        <td class="aprice">70</td>
+        <td>红色</td>
+        <td>482</td>
+        <td>100%</td>
+        <td align="center">
+          <input type="button" value="加入购物车" class="addbtn"/>
+        </td>
+      </tr>
+    </table>
+  
+    <h1>购物车</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>商品</th>
+          <th>单价(元)</th>
+          <th>数量</th>
+          <th>金额(元)</th>
+          <th>删除</th>
+        </tr>
+      </thead>
+      <tbody id="goods">
+        <tr class="com">
+          <td>罗技M185鼠标</td>
+          <td class="amunaprice">80</td>
+          <td align="center">
+            <input type="button" value="-" class="jian"/>
+            <input type="text" size="3" readonly value="1" class="num"/ style="text-align: center;">
+            <input type="button" value="+" class="jia" />
+          </td>
+          <td class="aprices">80
+            <!-- 一个商品总数量金额 -->
+            <!-- <input type="text" name="" readonly value="80" class="aprices" style="width: 50px;text-align: center;"> -->
+          </td>
+          <td align="center"><input type="button" value="x" class="chu" /></td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" align="right">总计</td>
+          <td id="total">80</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>  
+
+    <script type="text/javascript" src="js/jquery-3.4.1.js" ></script>
+    <script type="text/javascript">
+      $(function(){
+        //添加购物车
+        $('.addbtn').click(function(){
+          //获取单击的索引
+          var index=$('.addbtn').index(this);
+          //根据索引获取name数组的值
+          var name=$('.name').eq(index).text();
+          //根据索引获取价格数组的值
+          var aprice=$('.aprice').eq(index).text();
+          console.log(name,aprice);
+
+          text='<tr class="com"><td>'+name+'</td><td class="amunaprice">'+aprice+'</td><td align="center"><input type="button" value="-" class="jian"/><input type="text" size="3" readonly value="1" class="num"/ style="text-align: center;"><input type="button" value="+" class="jia" /></td><td class="aprices">'+aprice+'</td><td align="center"><input type="button" value="x" class="chu" /></td></tr>';
+          $(text).appendTo('#goods');
+
+        })
+
+        
+        //数量减少
+        $('body').on('click','.jian',function(){
+          //获取减号按钮索引
+          var index=$('.jian').index(this);
+          var type=$('.jian').eq(index).val();
+          aprices(index,type);//调用
+        })
+        //数量增加
+        $('body').on('click','.jia',function(){
+          var index=$('.jia').index(this);
+          var type=$('.jia').eq(index).val();
+          aprices(index,type);
+        })
+
+        //封装
+        function aprices(index,type){
+          var num=$('.num').eq(index).val();//根据索引获取商品数量
+          var amunaprice=$('.amunaprice').eq(index).html();//获取单价
+          if (type=="+") {
+            num++;
+            $('.jian').eq(index).removeAttr('disabled');
+          }else{
+            if (num<2) {
+              $('.jian').eq(index).attr('disabled','disabled');
+            }else{
+              num--;
+            }
+          }
+          $('.num').eq(index).val(num);//把减后的数值 赋值给数量显示器
+          var aprices=$('.aprices').eq(index).text(num*amunaprice);
+          totals();
+        }
+       $('body').on('click','.chu',function(){
+        var index=$('.chu').index(this);
+          $('.com').eq(index).remove();
+          totals();
+        }) 
+       //总计金额
+        function totals(){
+          var arr=$('.aprices');
+          var total=0;
+          for (var i = 0; i < arr.length; i++) {
+            var c=$('.aprices').eq(i).text();
+            total+=Number(c);
+          }
+          $('#total').html(total);
+        }
+
+
+      })
+
+    </script>
+  </body>
+</html>
